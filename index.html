@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17191e">
+  <meta name="description" content="Pixel Art — a local-first browser image editor.">
+  <title>Pixel Art — Image Editor</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">P</span><span>PIXEL <b>ART</b></span></div>
+      <nav class="menus" aria-label="Main menu">
+        <button data-menu="file">File</button><button data-menu="edit">Edit</button>
+        <button data-menu="image">Image</button><button data-menu="layer">Layer</button>
+        <button data-menu="view">View</button>
+      </nav>
+      <div class="top-actions">
+        <button id="openProject" class="subtle">Open project</button><button id="filePsd" class="subtle">Import PSD</button>
+        <button id="saveProject" class="subtle">Save project</button>
+        <button id="exportJpg" class="subtle">JPG</button><button id="exportPsd" class="subtle">PSD</button>
+        <button id="exportPng" class="primary">PNG</button>
+      </div>
+    </header>
+    <section class="optionsbar">
+      <div id="toolName">Move Tool</div>
+      <div class="option-separator"></div>
+      <label>Size <input id="brushSize" type="number" min="1" max="300" value="24"></label>
+      <label>Opacity <input id="brushOpacity" type="range" min="1" max="100" value="100"><span id="opacityValue">100%</span></label>
+      <label>Color <input id="foregroundColor" type="color" value="#e8edf5"></label>
+      <span class="options-hint" id="toolHint">Drag to move the active layer</span>
+    </section>
+    <main class="workspace">
+      <aside class="toolbar" aria-label="Tools">
+        <button class="tool active" data-tool="move" title="Move (V)"><span>↖</span><small>Move</small></button>
+        <button class="tool" data-tool="brush" title="Brush (B)"><span>✎</span><small>Brush</small></button>
+        <button class="tool" data-tool="eraser" title="Eraser (E)"><span>◩</span><small>Eraser</small></button>
+        <button class="tool" data-tool="eyedropper" title="Eyedropper (I)"><span>⌖</span><small>Picker</small></button>
+        <div class="tool-divider"></div>
+        <button class="tool" id="undo" title="Undo (Ctrl+Z)"><span>↶</span><small>Undo</small></button>
+        <button class="tool" id="redo" title="Redo (Ctrl+Y)"><span>↷</span><small>Redo</small></button>
+        <div class="tool-divider"></div>
+        <button class="tool" id="importButton" title="Import image"><span>＋</span><small>Import</small></button>
+        <button class="tool" id="cropSelection" title="Crop to selection"><span>▣</span><small>Crop</small></button>
+        <button class="tool" id="fitCanvas" title="Fit canvas"><span>⌗</span><small>Fit</small></button>
+        <div class="swatches"><input id="swatchColor" type="color" value="#e8edf5" aria-label="Foreground color"></div>
+      </aside>
+      <section class="center">
+        <div class="tabbar"><div class="document-tab"><span class="tab-dot"></span><span id="documentTitle">Untitled</span><span class="tab-close">×</span></div><button id="newDocument" title="New document">＋</button></div>
+        <div class="canvas-area" id="canvasArea">
+          <div class="welcome" id="welcome">
+            <div class="welcome-icon">▧</div>
+            <h1>Start creating</h1>
+            <p>Open an image or create a new document to begin editing.</p>
+            <button class="primary" id="welcomeImport">Open image</button>
+            <button class="subtle" id="createBlank">New document</button>
+            <span>PNG · JPG · WEBP · SVG · GIF</span>
+          </div>
+          <div class="canvas-wrap" id="canvasWrap" hidden>
+            <canvas id="displayCanvas"></canvas>
+          </div>
+        </div>
+        <section class="timeline"><div class="timeline-head"><b>Timeline</b><div><button id="addFrame">＋ Frame</button><button id="playTimeline">Play</button><button id="exportFrames">Export frames</button><label class="fps-control">FPS <input id="timelineFps" type="number" min="1" max="24" value="6"></label></div></div><div id="timelineFrames" class="timeline-frames"></div></section>
+        <footer class="statusbar"><span id="statusDimensions">No document</span><span id="saveStatus" class="save-status">Ready</span><span class="status-spacer"></span><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">＋</button><button id="zoomFit">Fit</button></footer>
+      </section>
+      <aside class="right-panel">
+        <div class="panel-heading"><span>LAYERS</span><div><button id="addLayer" title="New layer">＋</button><button id="deleteLayer" title="Delete layer">⌫</button></div></div>
+        <div class="layer-actions"><button id="duplicateLayer">Duplicate</button><button id="renameLayer">Rename</button><button id="lockLayer">Lock</button></div>
+        <div class="layer-actions"><button id="addMask">Add mask</button><button id="groupLayers">Group</button><button id="ungroupLayers">Ungroup</button><label class="inline-check"><input type="checkbox" id="editMask"> Edit mask</label></div>
+        <label class="blend-control">Blend mode <select id="blendMode"><option value="source-over">Normal</option><option value="multiply">Multiply</option><option value="screen">Screen</option><option value="overlay">Overlay</option><option value="darken">Darken</option><option value="lighten">Lighten</option><option value="color-dodge">Color dodge</option><option value="color-burn">Color burn</option><option value="hard-light">Hard light</option><option value="soft-light">Soft light</option><option value="difference">Difference</option><option value="exclusion">Exclusion</option></select></label>
+        <div id="layerList" class="layer-list"><div class="empty-layers">No layers yet</div></div>
+        <div class="layer-properties">
+          <div class="property-title">Layer properties</div>
+          <label>Opacity <input id="layerOpacity" type="range" min="0" max="100" value="100"><span id="layerOpacityValue">100%</span></label>
+          <label class="visibility-control"><input id="layerVisible" type="checkbox" checked> Visible</label>
+        </div>
+        <div class="panel-note">Layers are composited locally in your browser.</div>
+        <section id="adjustmentPanel" class="adjustment-panel" hidden><b>Image adjustments</b>
+          <label>Brightness <input id="brightness" type="range" min="-100" max="100" value="0"></label>
+          <label>Contrast <input id="contrast" type="range" min="-100" max="100" value="0"></label>
+          <label>Saturation <input id="saturation" type="range" min="-100" max="100" value="0"></label>
+          <label>Blur <input id="blur" type="range" min="0" max="12" value="0"></label>
+          <label><input id="grayscale" type="checkbox"> Grayscale</label><label><input id="invert" type="checkbox"> Invert</label>
+          <button id="applyAdjustments" class="primary">Apply to active layer</button>
+        </section>
+      </aside>
+    </main>
+    <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif" hidden>
+    <input type="file" id="projectInput" accept=".pixelart,application/json" hidden>
+    <input type="file" id="psdInput" accept=".psd,application/photoshop" hidden>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="modal" class="modal" hidden>
+      <div class="modal-card"><h2>New document</h2><label>Width <input id="newWidth" type="number" min="1" max="10000" value="1200"></label><label>Height <input id="newHeight" type="number" min="1" max="10000" value="800"></label><div class="modal-actions"><button id="cancelNew" class="subtle">Cancel</button><button id="confirmNew" class="primary">Create</button></div></div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
